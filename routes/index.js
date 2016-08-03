@@ -4,8 +4,6 @@ var nodemailer = require('nodemailer');
 var EmailTemplate = require('email-templates').EmailTemplate;
 var path = require('path');
 
-var templateDir = path.join(__dirname, '..', 'templates', 'welcome-email');
-
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -21,25 +19,31 @@ router.get('/mail', function(req, res, next) {
     }
   });
 
-  var sendWelcomeReminder = transporter.templateSender(new EmailTemplate(templateDir), {
-    from: 'admin@gosponge.com',
-  });
+  var template = new EmailTemplate(path.join(__dirname, '..', 'templates', 'welcome-email'))
 
-  sendWelcomeReminder({
-    to: 'harryworld@gmail.com',
-    // EmailTemplate renders html and text but no subject so we need to
-    // set it manually either here or in the defaults section of templateSender()
-    subject: 'Password reminder'
-  }, {
+  var locals = {
       username: 'Node Mailer',
       password: '!"\'<>&some-thing'
-  }, function(err, info){
-      if(err){
-        console.log(err);
-      }else{
-        console.log('Welcome email sent');
+  };
+
+  template.render(locals, function(err, results) {
+    if (err) {
+      return console.error(err);
+    }
+
+    transporter.sendMail({
+      from: 'Go <admin@gosponge.com>',
+      to: 'harryworld@gmail.com',
+      subject: 'Welcome to join GoSponge',
+      html: results.html,
+      text: results.text
+    }, function(err, responseStatus) {
+      if (err) {
+        return console.error(err);
+      } else {
         res.render('index', { title: 'Email Sent' });
       }
+    })
   });
 
 });
