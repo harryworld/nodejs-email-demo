@@ -19,7 +19,7 @@ router.get('/mail', function(req, res, next) {
     }
   });
 
-  var template = new EmailTemplate(path.join(__dirname, '..', 'templates', 'welcome-email'))
+  var template = new EmailTemplate(path.join(__dirname, '..', 'templates', 'alert'))
 
   var locals = {
       username: 'Node Mailer',
