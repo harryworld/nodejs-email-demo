@@ -4,6 +4,11 @@ var nodemailer = require('nodemailer');
 var EmailTemplate = require('email-templates').EmailTemplate;
 var path = require('path');
 
+var MailDev = require('maildev');
+
+var maildev = new MailDev();
+maildev.listen();
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -12,11 +17,8 @@ router.get('/', function(req, res, next) {
 router.get('/mail', function(req, res, next) {
 
   var transporter = nodemailer.createTransport({
-    service: 'Mailgun',
-    auth: {
-      user: 'postmaster@sandbox1e7780edf89c4a9c9bb9e1b58b8c1369.mailgun.org',
-      pass: '88c0e851f5513c8cc5689c9838dc1869'
-    }
+    port: 1025,
+    ignoreTLS: true
   });
 
   var template = new EmailTemplate(path.join(__dirname, '..', 'templates', 'alert'))
